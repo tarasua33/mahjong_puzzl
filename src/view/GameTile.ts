@@ -1,0 +1,44 @@
+import {
+	StandardSprite,
+	StandardSpriteConfig,
+} from "../libs/gameObjects/StandardSprite";
+import {
+	GENERATOR_CONFIG,
+	ITileModel,
+	TILE_HIGHT,
+	TILE_WIDTH,
+} from "../models/LevelModel";
+
+const LAYER_OFFSETS = {
+	x: 5,
+	y: 4,
+};
+
+export interface GameTileConfig extends StandardSpriteConfig {
+	type: number;
+}
+
+export class GameTile extends StandardSprite<GameTileConfig> {
+	public readonly type: number;
+
+	constructor(config: GameTileConfig) {
+		super(config);
+
+		this.type = config.type;
+	}
+
+	public build(): void {
+		super.build();
+
+		this.anchor.set(0, 0);
+	}
+
+	public setPosition(tileModel: ITileModel): void {
+		this.x =
+			tileModel.x * (TILE_WIDTH / GENERATOR_CONFIG.tileWidth) -
+			LAYER_OFFSETS.x * tileModel.layer;
+		this.y =
+			tileModel.y * (TILE_HIGHT / GENERATOR_CONFIG.tileHeight) -
+			LAYER_OFFSETS.x * tileModel.layer;
+	}
+}
