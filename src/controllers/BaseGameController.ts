@@ -1,12 +1,13 @@
 import { IGameView } from "../factories/GameViewFactory";
 import { Controller, IControllerParams } from "../libs/controllers/Controller";
-import { AwaitOnUserActionStep } from "../libs/controllers/steps/AwaitOnUserActionStep";
+import { AwaitOnUserActionStep } from "./steps/AwaitOnUserActionStep";
 import { AwaitTimeStep } from "../libs/controllers/steps/AwaitTimeStep";
 // import { Signal } from "../libs/utils/Signal";
 import { UserInteractionDispatcher } from "../libs/utils/UserInteractionDispatcher";
 import { PlaceTilesStep } from "./steps/PlaceTileStep";
 import { ScreenFadeInStep } from "./steps/ScreenFadeInStep";
 import { ScreenFadeOutStep } from "./steps/ScreenFadeOutStep";
+import { MovePickedTileToPanelStep } from "./steps/MovePickedTileToPanelStep";
 
 // import { SetLvlSettingsStep } from "./steps/SetLvlSettingsStep";
 
@@ -22,7 +23,7 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 	private _screenFadeOutStep: ScreenFadeOutStep;
 	// private _setLvlSettingsStep!: SetLvlSettingsStep;
 
-	private _gameView!: IGameView;
+	// private _gameView!: IGameView;
 
 	constructor() {
 		super();
@@ -41,7 +42,11 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 		});
 
 		while (true) {
-			await new AwaitOnUserActionStep().start();
+			await new AwaitOnUserActionStep().start({});
+
+			await new MovePickedTileToPanelStep().start({
+				panel: this._params!.gameView.panel,
+			});
 		}
 
 		await new AwaitTimeStep().start({
@@ -70,14 +75,6 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 
 	// private _onStopGame(): void {
 	// 	// const gameView = this._gameView;
-	// 	// this._mng.addDynamicStep(this._stopGameStep, {
-	// 	//   platformMoveContainer: gameView.platformMoveContainer,
-	// 	//   character: gameView.character,
-	// 	//   mountains: gameView.mountains,
-	// 	//   shadows: gameView.shadows,
-	// 	//   frontTrees: gameView.frontTrees,
-	// 	//   isFail,
-	// 	// });
 	// 	// this.forceComplete();
 	// }
 

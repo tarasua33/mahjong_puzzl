@@ -106,6 +106,6 @@ export class Game {
 	}
 
 	public async play() {
-		await this._baseGame.start();
+		await this._baseGame.start({});
 	}
 }

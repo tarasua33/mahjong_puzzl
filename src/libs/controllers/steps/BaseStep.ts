@@ -21,7 +21,7 @@ export abstract class BaseStep<T extends BaseStepParams = BaseStepParams> {
 		this._models.levelModel.getLvlMechanicSettings();
 	}
 
-	public async start(params?: T): Promise<void> {
+	public async start(params: T): Promise<void> {
 		return new Promise((resolve, reject) => {
 			this._params = params;
 			this._resolve = resolve;

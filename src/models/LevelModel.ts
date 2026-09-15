@@ -102,7 +102,8 @@ export class LevelModel {
 	private _lvl = 1;
 	private _settings!: IMechanicSettings;
 	private _placedTiles = new Map<TileKey, GameTile>();
-	private _pickedTile!: ITileModel;
+	private _pickedTile?: ITileModel;
+	private _activeTiles!: ITileModel[];
 
 	public setPlacedTiles(tiles: Map<TileKey, GameTile>): void {
 		this._placedTiles = tiles;
@@ -118,6 +119,25 @@ export class LevelModel {
 
 	public setPickedTileData(pickedTile: ITileModel): void {
 		this._pickedTile = pickedTile;
+	}
+
+	public getPickedTileData(): ITileModel {
+		return this._pickedTile!;
+	}
+
+	public removePickedTileData(): void {
+		this._pickedTile = undefined;
+	}
+
+	public addActiveTilesData(pickedTile: ITileModel): void {
+		if (!this._activeTiles) {
+			this._activeTiles = [];
+		}
+		this._activeTiles.push(pickedTile);
+	}
+
+	public getActiveTilesData(): ITileModel[] {
+		return this._activeTiles;
 	}
 
 	public setUpLvl(newLvl: number): void {
@@ -481,17 +501,15 @@ export class LevelModel {
 	}
 
 	public removeTile(tileModel: ITileModel): void {
-		const settings = this.getLvlMechanicSettings();
+		const settings = this._settings;
 
 		const { geometryMatrix, typeMatrix } = settings;
-		const { id, layer } = tileModel;
+		const { id, layer, x, y } = tileModel;
 
-		for (let y = 0; y < geometryMatrix[layer].length; y++) {
-			for (let x = 0; x < geometryMatrix[layer][y].length; x++) {
-				if (geometryMatrix[layer][y][x] === id) {
-					geometryMatrix[layer][y][x] = 0;
-					typeMatrix[layer][y][x] = 0;
-				}
+		for (let dy = 0; dy < GENERATOR_CONFIG.tileHeight; dy++) {
+			for (let dx = 0; dx < GENERATOR_CONFIG.tileWidth; dx++) {
+				geometryMatrix[layer][y + dy][x + dx] = 0;
+				typeMatrix[layer][y + dy][x + dx] = 0;
 			}
 		}
 

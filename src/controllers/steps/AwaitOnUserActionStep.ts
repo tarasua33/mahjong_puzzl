@@ -1,6 +1,9 @@
-import { ITileModel } from "../../../models/LevelModel";
-import { GameTile } from "../../../view/GameTile";
-import { BaseStep, BaseStepParams } from "./BaseStep";
+import { ITileModel } from "../../models/LevelModel";
+import { GameTile } from "../../view/GameTile";
+import {
+	BaseStep,
+	BaseStepParams,
+} from "../../libs/controllers/steps/BaseStep";
 
 export class AwaitOnUserActionStep extends BaseStep<BaseStepParams> {
 	private _tiles: GameTile[] = [];
@@ -20,6 +23,12 @@ export class AwaitOnUserActionStep extends BaseStep<BaseStepParams> {
 
 		if (!levelModel.tileCanMove(tileModel)) {
 			console.warn("===== NO =======");
+			const geometryMatrix =
+				this._models.levelModel.getLvlMechanicSettings().geometryMatrix;
+			const typeMatrix =
+				this._models.levelModel.getLvlMechanicSettings().typeMatrix;
+			console.warn(geometryMatrix[0], geometryMatrix[1]);
+			console.warn(typeMatrix[0], typeMatrix[1]);
 			return;
 		}
 
