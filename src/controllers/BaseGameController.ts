@@ -1,5 +1,6 @@
 import { IGameView } from "../factories/GameViewFactory";
 import { Controller, IControllerParams } from "../libs/controllers/Controller";
+import { AwaitOnUserActionStep } from "../libs/controllers/steps/AwaitOnUserActionStep";
 import { AwaitTimeStep } from "../libs/controllers/steps/AwaitTimeStep";
 // import { Signal } from "../libs/utils/Signal";
 import { UserInteractionDispatcher } from "../libs/utils/UserInteractionDispatcher";
@@ -38,6 +39,10 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 			parent: this._params!.gameView.tileContainer,
 			pool: this._params!.gameView.tilePool,
 		});
+
+		while (true) {
+			await new AwaitOnUserActionStep().start();
+		}
 
 		await new AwaitTimeStep().start({
 			delay: 200.0,

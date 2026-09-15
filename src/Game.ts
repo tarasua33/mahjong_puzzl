@@ -8,12 +8,6 @@ import { StandardContainer } from "./libs/gameObjects/StandardContainer";
 import { ViewPort } from "./libs/gameObjects/IGameObject";
 import { GAME_DIMENSIONS, GAME_DIMENSIONS_PORTRAIT } from "./gameConfig";
 
-// export const GAME_DIMENSIONS = {
-// 	width: widthGame,
-// 	height: heightGame,
-// 	halfWidth: widthGame / 2,
-// };
-
 export class Game {
 	private _stage: Container;
 	// private _view: HTMLCanvasElement;

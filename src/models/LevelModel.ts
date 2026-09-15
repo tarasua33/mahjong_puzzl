@@ -1,3 +1,5 @@
+import { GameTile } from "../view/GameTile";
+
 interface ILevelGeneratorConfig {
 	layers: number;
 
@@ -83,6 +85,7 @@ export const LAYERING_MATRIX = [
 	[136, 154, 173, 193, 214, 236, 259, 283, 308, 334, 361, 389],
 	[153, 172, 192, 213, 235, 258, 282, 307, 333, 360, 388, 417],
 ];
+export type TileKey = `${number}-${number}-${number}`;
 
 export class LevelModel {
 	static instance: LevelModel;
@@ -96,26 +99,41 @@ export class LevelModel {
 	}
 
 	private readonly _config: ILevelGeneratorConfig = GENERATOR_CONFIG;
-
 	private _lvl = 1;
 	private _settings!: IMechanicSettings;
+	private _placedTiles = new Map<TileKey, GameTile>();
+	private _pickedTile!: ITileModel;
+
+	public setPlacedTiles(tiles: Map<TileKey, GameTile>): void {
+		this._placedTiles = tiles;
+	}
+
+	public getPlacedTiles(): Map<TileKey, GameTile> {
+		return this._placedTiles;
+	}
 
 	public getGeneralSettings(): ITileSettings {
 		return TILE_SETTINGS;
+	}
+
+	public setPickedTileData(pickedTile: ITileModel): void {
+		this._pickedTile = pickedTile;
 	}
 
 	public setUpLvl(newLvl: number): void {
 		this._lvl = newLvl;
 	}
 
-	public get lvl(): number {
-		return this._lvl;
-	}
+	// public get lvl(): number {
+	// 	return this._lvl;
+	// }
 
 	public getLvlMechanicSettings(): IMechanicSettings {
 		if (!this._settings) {
 			this.generateLvlMechanicSettings();
 		}
+
+		console.log(this._settings);
 
 		return this._settings;
 	}
@@ -399,5 +417,84 @@ export class LevelModel {
 		const zIndex = LAYERING_MATRIX[y][x] + layerIndex * LAYER_Z_OFFSET;
 
 		return zIndex;
+	}
+
+	public tileCanMove(tileModel: ITileModel): boolean {
+		const { geometryMatrix } = this.getLvlMechanicSettings();
+		const { layer, x, y } = tileModel;
+
+		const upperLayer = geometryMatrix[layer + 1];
+
+		if (upperLayer && this._hasBlockingTileAbove(upperLayer, x, y)) {
+			return false;
+		}
+
+		const currentLayer = geometryMatrix[layer];
+
+		if (!this._isSideBlocked(currentLayer, x, y, -1)) {
+			return true;
+		}
+
+		if (!this._isSideBlocked(currentLayer, x, y, 1)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private _hasBlockingTileAbove(
+		upperLayer: number[][],
+		x: number,
+		y: number,
+	): boolean {
+		for (let row = 0; row < this._config.tileHeight; row++) {
+			for (let col = 0; col < this._config.tileWidth; col++) {
+				if (upperLayer[y + row]?.[x + col] > 0) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private _isSideBlocked(
+		layer: number[][],
+		x: number,
+		y: number,
+		direction: -1 | 1,
+	): boolean {
+		const sideX = direction === -1 ? x - 1 : x + this._config.tileWidth;
+
+		// Фішка знаходиться біля краю
+		if (sideX < 0 || sideX >= this._config.maxWidth) {
+			return false;
+		}
+
+		for (let row = 0; row < this._config.tileHeight; row++) {
+			if (layer[y + row]?.[sideX] === 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public removeTile(tileModel: ITileModel): void {
+		const settings = this.getLvlMechanicSettings();
+
+		const { geometryMatrix, typeMatrix } = settings;
+		const { id, layer } = tileModel;
+
+		for (let y = 0; y < geometryMatrix[layer].length; y++) {
+			for (let x = 0; x < geometryMatrix[layer][y].length; x++) {
+				if (geometryMatrix[layer][y][x] === id) {
+					geometryMatrix[layer][y][x] = 0;
+					typeMatrix[layer][y][x] = 0;
+				}
+			}
+		}
+
+		settings.tiles = settings.tiles.filter((tile) => tile.id !== id);
 	}
 }

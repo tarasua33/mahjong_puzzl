@@ -2,6 +2,8 @@ import {
 	StandardSprite,
 	StandardSpriteConfig,
 } from "../libs/gameObjects/StandardSprite";
+import { Signal } from "../libs/utils/Signal";
+import { UserInteractionDispatcher } from "../libs/utils/UserInteractionDispatcher";
 import {
 	GENERATOR_CONFIG,
 	ITileModel,
@@ -19,7 +21,10 @@ export interface GameTileConfig extends StandardSpriteConfig {
 }
 
 export class GameTile extends StandardSprite<GameTileConfig> {
+	public readonly onPickSignal = new Signal();
 	public readonly type: number;
+	private _dispatcher!: UserInteractionDispatcher;
+	private _tileModel!: ITileModel;
 
 	constructor(config: GameTileConfig) {
 		super(config);
@@ -31,9 +36,18 @@ export class GameTile extends StandardSprite<GameTileConfig> {
 		super.build();
 
 		this.anchor.set(0, 0);
+		const dispatcher = (this._dispatcher = new UserInteractionDispatcher(this));
+		dispatcher.pointerDownSignal.add(this._onPointed, this);
+	}
+
+	_onPointed(): void {
+		console.log(this._tileModel);
+
+		this.onPickSignal.dispatch(this._tileModel);
 	}
 
 	public setPosition(tileModel: ITileModel): void {
+		this._tileModel = tileModel;
 		this.x =
 			tileModel.x * (TILE_WIDTH / GENERATOR_CONFIG.tileWidth) -
 			LAYER_OFFSETS.x * tileModel.layer;
