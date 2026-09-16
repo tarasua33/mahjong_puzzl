@@ -37,20 +37,20 @@ export class GameViewFactory extends AbstractBaseFactory {
 		const panelFactory = new PanelFactory();
 
 		const bg = bgFactory.buildUi({ parent: mainScene });
-		const panel = panelFactory.buildUi({ parent: mainScene });
 		const tileContainer = new StandardContainer({
 			landscape: {
 				x: 450,
-				y: 40,
+				y: 70,
 				scale: { x: 0.72, y: 0.72 },
 			},
 			portrait: {
-				x: 50,
-				y: 125,
-				scale: { x: 1, y: 1 },
+				x: 125,
+				y: 275,
+				scale: { x: 0.8, y: 0.8 },
 			},
 		});
 		mainScene.addChild(tileContainer);
+		const panel = panelFactory.buildUi({ parent: tileContainer });
 
 		// const tapHintFactory = new TapHintFactory();
 		// const muteButtonFactory = new MuteButtonFactory();

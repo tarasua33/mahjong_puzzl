@@ -55,8 +55,8 @@ export class MovePickedTileToPanelStep extends BaseStep<MovePickedTileToPanelSte
 		tile.parent!.addChild(tile);
 
 		const startScale = tile.scale.x;
-		const parentScale = tile.parent!.scale.x;
-		const targetScale = (startScale * 1.15) / parentScale;
+		// const parentScale = tile.parent!.scale.x;
+		const targetScale = startScale * 1.15;
 
 		gsap.killTweensOf(tile);
 
@@ -70,7 +70,7 @@ export class MovePickedTileToPanelStep extends BaseStep<MovePickedTileToPanelSte
 				targetContainer.addChild(tile);
 
 				tile.position.set(0, 0);
-				tile.scale.set(startScale * parentScale, startScale * parentScale);
+				tile.scale.set(startScale, startScale);
 
 				placedTiles.delete(tileKey);
 				this._models.levelModel.addActiveTilesData(

@@ -14,7 +14,7 @@ export class PanelFactory extends AbstractStandardFactory<Panel> {
 			x: 0,
 			y: 0,
 			anchor: { x: 0.5, y: 0.5 },
-			scale: { x: 0.75, y: 0.75 },
+			scale: { x: 1, y: 1 },
 		};
 
 		const panel = new Panel({
@@ -22,21 +22,21 @@ export class PanelFactory extends AbstractStandardFactory<Panel> {
 			y: GAME_DIMENSIONS.height / 2,
 
 			landscape: {
-				x: 220,
+				x: -300,
 				y: GAME_DIMENSIONS.height / 2,
 			},
 
 			portrait: {
-				x: GAME_DIMENSIONS_PORTRAIT.width / 2,
-				y: 50,
+				x: GAME_DIMENSIONS_PORTRAIT.width / 2 - 37.5,
+				y: -200,
 			},
 
 			bg,
 			tilesPositions: [
-				{ x: -185, y: -55 },
-				{ x: -90, y: -55 },
-				{ x: 5, y: -55 },
-				{ x: 100, y: -55 },
+				{ x: -250, y: -75 },
+				{ x: -120, y: -75 },
+				{ x: 5, y: -75 },
+				{ x: 130, y: -75 },
 			],
 		});
 
