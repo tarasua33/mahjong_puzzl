@@ -14,7 +14,6 @@ interface ILevelGeneratorConfig {
 }
 
 export interface ITileModel {
-	id: number;
 	type: number;
 	layer: number;
 	x: number;
@@ -103,7 +102,7 @@ export class LevelModel {
 	private _settings!: IMechanicSettings;
 	private _placedTiles = new Map<TileKey, GameTile>();
 	private _pickedTile?: ITileModel;
-	private _activeTiles!: ITileModel[];
+	// private _activeTiles!: ITileModel[];
 
 	public setPlacedTiles(tiles: Map<TileKey, GameTile>): void {
 		this._placedTiles = tiles;
@@ -129,16 +128,16 @@ export class LevelModel {
 		this._pickedTile = undefined;
 	}
 
-	public addActiveTilesData(pickedTile: ITileModel): void {
-		if (!this._activeTiles) {
-			this._activeTiles = [];
-		}
-		this._activeTiles.push(pickedTile);
-	}
+	// public addActiveTilesData(pickedTile: ITileModel): void {
+	// 	if (!this._activeTiles) {
+	// 		this._activeTiles = [];
+	// 	}
+	// 	this._activeTiles.push(pickedTile);
+	// }
 
-	public getActiveTilesData(): ITileModel[] {
-		return this._activeTiles;
-	}
+	// public getActiveTilesData(): ITileModel[] {
+	// 	return this._activeTiles;
+	// }
 
 	public setUpLvl(newLvl: number): void {
 		this._lvl = newLvl;
@@ -161,7 +160,7 @@ export class LevelModel {
 	public generateLvlMechanicSettings(): IMechanicSettings {
 		const geometryMatrix = this._generateGeometryMatrix();
 		const typeMatrix = this._generateTypeMatrix(geometryMatrix);
-		const tiles = this._getTilesModels(typeMatrix);
+		const tiles = this._getTilesModels(geometryMatrix, typeMatrix);
 		// console.log(typeMatrix);
 
 		return (this._settings = {
@@ -171,30 +170,34 @@ export class LevelModel {
 		});
 	}
 
-	private _getTilesModels(idMatrix: number[][][]): ITileModel[] {
+	private _getTilesModels(
+		geometryMatrix: number[][][],
+		typeMatrix: number[][][],
+	): ITileModel[] {
 		const tiles: ITileModel[] = [];
 
-		for (let layer = 0; layer < idMatrix.length; layer++) {
-			for (let y = 0; y < idMatrix[layer].length; y++) {
-				for (let x = 0; x < idMatrix[layer][y].length; x++) {
-					const tileId = idMatrix[layer][y][x];
+		for (let layer = 0; layer < geometryMatrix.length; layer++) {
+			for (let y = 0; y < geometryMatrix[layer].length; y++) {
+				for (let x = 0; x < geometryMatrix[layer][y].length; x++) {
+					const geometryId = geometryMatrix[layer][y][x];
 
-					if (tileId === 0) {
+					if (geometryId === 0) {
 						continue;
 					}
 
 					if (
-						(x === 0 || idMatrix[layer][y][x - 1] !== tileId) &&
-						(y === 0 || idMatrix[layer][y - 1][x] !== tileId)
+						(x > 0 && geometryMatrix[layer][y][x - 1] === geometryId) ||
+						(y > 0 && geometryMatrix[layer][y - 1][x] === geometryId)
 					) {
-						tiles.push({
-							id: tileId,
-							type: tileId,
-							layer,
-							x,
-							y,
-						});
+						continue;
 					}
+
+					tiles.push({
+						type: typeMatrix[layer][y][x],
+						layer,
+						x,
+						y,
+					});
 				}
 			}
 		}
@@ -486,25 +489,25 @@ export class LevelModel {
 	): boolean {
 		const sideX = direction === -1 ? x - 1 : x + this._config.tileWidth;
 
-		// Фішка знаходиться біля краю
+		// Біля краю — сторона НЕ заблокована
 		if (sideX < 0 || sideX >= this._config.maxWidth) {
 			return false;
 		}
 
 		for (let row = 0; row < this._config.tileHeight; row++) {
-			if (layer[y + row]?.[sideX] === 0) {
-				return false;
+			if (layer[y + row]?.[sideX] > 0) {
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 
 	public removeTile(tileModel: ITileModel): void {
 		const settings = this._settings;
 
 		const { geometryMatrix, typeMatrix } = settings;
-		const { id, layer, x, y } = tileModel;
+		const { type, layer, x, y } = tileModel;
 
 		for (let dy = 0; dy < GENERATOR_CONFIG.tileHeight; dy++) {
 			for (let dx = 0; dx < GENERATOR_CONFIG.tileWidth; dx++) {
@@ -513,6 +516,6 @@ export class LevelModel {
 			}
 		}
 
-		settings.tiles = settings.tiles.filter((tile) => tile.id !== id);
+		settings.tiles = settings.tiles.filter((tile) => tile.type !== type);
 	}
 }

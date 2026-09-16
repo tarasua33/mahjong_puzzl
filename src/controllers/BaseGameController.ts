@@ -8,6 +8,7 @@ import { PlaceTilesStep } from "./steps/PlaceTileStep";
 import { ScreenFadeInStep } from "./steps/ScreenFadeInStep";
 import { ScreenFadeOutStep } from "./steps/ScreenFadeOutStep";
 import { MovePickedTileToPanelStep } from "./steps/MovePickedTileToPanelStep";
+import { MatchTilesStep } from "./steps/MatchTilesStep";
 
 // import { SetLvlSettingsStep } from "./steps/SetLvlSettingsStep";
 
@@ -35,17 +36,33 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 	}
 
 	protected async _start(): Promise<void> {
+		const gameView = this._params!.gameView;
+
 		const placeStep = new PlaceTilesStep();
 		placeStep.start({
-			parent: this._params!.gameView.tileContainer,
-			pool: this._params!.gameView.tilePool,
+			parent: gameView.tileContainer,
+			pool: gameView.tilePool,
 		});
 
 		while (true) {
+			await new AwaitTimeStep().start({
+				delay: 0.25,
+			});
+
 			await new AwaitOnUserActionStep().start({});
 
 			await new MovePickedTileToPanelStep().start({
-				panel: this._params!.gameView.panel,
+				panel: gameView.panel,
+			});
+
+			await new MatchTilesStep().start({
+				panel: gameView.panel,
+				gameTilePool: gameView.tilePool,
+				particleLayers: gameView.particleLayers,
+			});
+
+			await new AwaitTimeStep().start({
+				delay: 0.25,
 			});
 		}
 

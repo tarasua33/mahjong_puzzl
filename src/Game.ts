@@ -1,4 +1,4 @@
-import { Container, Text, Ticker } from "pixi.js";
+import { Container, Renderer, Text, Ticker } from "pixi.js";
 import { MainScene } from "./view/MainScene";
 import { AssetsLoader } from "./libs/utils/AssetsLoader";
 import { BaseGameState } from "./controllers/BaseGameState";
@@ -17,7 +17,7 @@ export class Game {
 	private _userInteractionDispatcher!: UserInteractionDispatcher;
 	private _loadingText!: Text;
 
-	constructor(stage: Container) {
+	constructor(stage: Container, renderer: Renderer) {
 		this._stage = stage;
 		// this._view = view;
 
@@ -30,6 +30,7 @@ export class Game {
 				x: 0,
 				y: 0,
 			},
+			renderer,
 		}));
 		mainScene.build();
 		stage.addChild(mainScene);

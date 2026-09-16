@@ -73,9 +73,8 @@ export class MovePickedTileToPanelStep extends BaseStep<MovePickedTileToPanelSte
 				tile.scale.set(startScale, startScale);
 
 				placedTiles.delete(tileKey);
-				this._models.levelModel.addActiveTilesData(
-					this._models.levelModel.getPickedTileData(),
-				);
+				// this._models.levelModel.addActiveTilesData(// );
+				// this._models.levelModel.getPickedTileData(),
 				this._models.levelModel.removePickedTileData();
 
 				this._cleanup();

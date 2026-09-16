@@ -4,10 +4,11 @@ import { StandardContainer } from "../libs/gameObjects/StandardContainer";
 import { BaseGameController } from "./BaseGameController";
 import { UserInteractionDispatcher } from "../libs/utils/UserInteractionDispatcher";
 import { TransitionController } from "./TransitionController";
+import { MainScene } from "../view/MainScene";
 
 interface ISTateParams {
 	userInteractionDispatcher: UserInteractionDispatcher;
-	mainScene: StandardContainer;
+	mainScene: MainScene;
 	uiContainer: StandardContainer;
 }
 
@@ -43,7 +44,7 @@ export class BaseGameState extends BaseState {
 	}
 
 	private _buildGameObjects(
-		mainScene: StandardContainer,
+		mainScene: MainScene,
 		uiContainer: StandardContainer,
 	): IGameView {
 		const uiFactory = new GameViewFactory();

@@ -34,8 +34,8 @@ export class PanelFactory extends AbstractStandardFactory<Panel> {
 			bg,
 			tilesPositions: [
 				{ x: -250, y: -75 },
-				{ x: -120, y: -75 },
-				{ x: 5, y: -75 },
+				{ x: -122, y: -75 },
+				{ x: 3, y: -75 },
 				{ x: 130, y: -75 },
 			],
 		});

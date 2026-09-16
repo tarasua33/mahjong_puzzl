@@ -2,12 +2,15 @@ import { AbstractBaseFactory } from "../libs/factories/AbstractBaseFactory";
 import { StandardContainer } from "../libs/gameObjects/StandardContainer";
 import { StandardSprite } from "../libs/gameObjects/StandardSprite";
 import { GameTilePool } from "../libs/utils/GameTilePool";
+import { MainScene } from "../view/MainScene";
 import { Panel } from "../view/Panel";
+import { ParticleLayer } from "../view/ParticleLayer";
 
 import { TransitionsScreen } from "../view/TransitionsScreen";
 import { BgFactory } from "./BgFactory";
 import { GameTilesFactory } from "./GameTilesFactory";
 import { PanelFactory } from "./PanelFactory";
+import { ParticleLayerFactory } from "./ParticleLayerFactory";
 // import { MuteButton } from "../view/ui/MuteButton";
 // import { TapHint } from "../view/ui/TapHint";
 
@@ -15,7 +18,7 @@ import { PanelFactory } from "./PanelFactory";
 import { TransitionsScreenFactory } from "./TransitionsScreenFactory";
 
 interface IBuildConfig {
-	mainScene: StandardContainer;
+	mainScene: MainScene;
 	uiContainer: StandardContainer;
 }
 
@@ -25,6 +28,7 @@ export interface IGameView {
 	transitionsScreen: TransitionsScreen;
 	tilePool: GameTilePool;
 	tileContainer: StandardContainer;
+	particleLayers: ParticleLayer[];
 }
 
 export class GameViewFactory extends AbstractBaseFactory {
@@ -35,7 +39,7 @@ export class GameViewFactory extends AbstractBaseFactory {
 		const transitionsScreenFactory = new TransitionsScreenFactory();
 		const tilePoolFactory = new GameTilesFactory();
 		const panelFactory = new PanelFactory();
-
+		const particleLayerFactory = new ParticleLayerFactory();
 		const bg = bgFactory.buildUi({ parent: mainScene });
 		const tileContainer = new StandardContainer({
 			landscape: {
@@ -51,6 +55,10 @@ export class GameViewFactory extends AbstractBaseFactory {
 		});
 		mainScene.addChild(tileContainer);
 		const panel = panelFactory.buildUi({ parent: tileContainer });
+		const particleLayers = particleLayerFactory.buildUi({
+			renderer: mainScene.renderer,
+			emitterCount: 2,
+		});
 
 		// const tapHintFactory = new TapHintFactory();
 		// const muteButtonFactory = new MuteButtonFactory();
@@ -66,6 +74,7 @@ export class GameViewFactory extends AbstractBaseFactory {
 			}),
 			tilePool: tilePoolFactory.buildUi(),
 			tileContainer,
+			particleLayers,
 			// muteButton: muteButtonFactory.buildUi({
 			// 	parent: uiContainer,
 			// }),

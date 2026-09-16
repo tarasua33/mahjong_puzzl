@@ -1,13 +1,20 @@
 // import { Graphics } from "pixi.js";
+import { Renderer } from "pixi.js";
 import {
 	StandardContainer,
 	StandardContainerConfig,
 } from "../libs/gameObjects/StandardContainer";
 // import { GAME_DIMENSIONS } from "../Game";
 
+interface MainSceneConfig extends StandardContainerConfig {
+	renderer: Renderer;
+}
+
 export class MainScene extends StandardContainer {
-	constructor(configs: StandardContainerConfig) {
+	public renderer!: Renderer;
+	constructor(configs: MainSceneConfig) {
 		super(configs);
+		this.renderer = configs.renderer;
 	}
 
 	public build(): void {
