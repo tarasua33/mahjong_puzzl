@@ -489,7 +489,6 @@ export class LevelModel {
 	): boolean {
 		const sideX = direction === -1 ? x - 1 : x + this._config.tileWidth;
 
-		// Біля краю — сторона НЕ заблокована
 		if (sideX < 0 || sideX >= this._config.maxWidth) {
 			return false;
 		}

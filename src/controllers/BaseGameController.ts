@@ -9,6 +9,7 @@ import { ScreenFadeInStep } from "./steps/ScreenFadeInStep";
 import { ScreenFadeOutStep } from "./steps/ScreenFadeOutStep";
 import { MovePickedTileToPanelStep } from "./steps/MovePickedTileToPanelStep";
 import { MatchTilesStep } from "./steps/MatchTilesStep";
+import { MoveTilesToLeftStep } from "./steps/MoveTilesToLeftStep";
 
 // import { SetLvlSettingsStep } from "./steps/SetLvlSettingsStep";
 
@@ -61,8 +62,8 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 				particleLayers: gameView.particleLayers,
 			});
 
-			await new AwaitTimeStep().start({
-				delay: 0.25,
+			await new MoveTilesToLeftStep().start({
+				panel: gameView.panel,
 			});
 		}
 
