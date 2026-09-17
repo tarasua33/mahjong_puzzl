@@ -1,6 +1,7 @@
 import { IGameView } from "../factories/GameViewFactory";
 import { Controller, IControllerParams } from "../libs/controllers/Controller";
 import { AwaitTimeStep } from "../libs/controllers/steps/AwaitTimeStep";
+import { ResetLvlStep } from "./steps/ResetLvlStep";
 import { ReturnTilesToPoolStep } from "./steps/ReturnTilesToPoolStep";
 
 import { ScreenFadeInStep } from "./steps/ScreenFadeInStep";
@@ -16,11 +17,13 @@ export class TransitionController extends Controller<ITransitionControllerParams
 	private _screenFadeInStep: ScreenFadeInStep;
 	private _screenFadeOutStep: ScreenFadeOutStep;
 	private _awaitTimeStep: AwaitTimeStep;
-	private _returnTilesToPoolStep!: ReturnTilesToPoolStep;
+	private _returnTilesToPoolStep: ReturnTilesToPoolStep;
+	private _resetLvlStep: ResetLvlStep;
 
 	constructor() {
 		super();
 
+		this._resetLvlStep = new ResetLvlStep();
 		this._awaitTimeStep = new AwaitTimeStep();
 		this._screenFadeInStep = new ScreenFadeInStep();
 		this._screenFadeOutStep = new ScreenFadeOutStep();
@@ -41,6 +44,11 @@ export class TransitionController extends Controller<ITransitionControllerParams
 			pool: gameView.tilePool,
 		});
 
+		this._resetLvlStep.start({
+			panel: gameView.panel,
+			button: gameView.shuffleButton,
+		});
+
 		await this._awaitTimeStep.start({
 			delay: 2,
 		});
@@ -48,5 +56,7 @@ export class TransitionController extends Controller<ITransitionControllerParams
 		await this._screenFadeOutStep.start({
 			screen: gameView.transitionsScreen,
 		});
+
+		this._complete();
 	}
 }

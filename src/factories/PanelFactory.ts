@@ -18,6 +18,7 @@ export class PanelFactory extends AbstractStandardFactory<Panel> {
 		};
 
 		const panel = new Panel({
+			alpha: 0,
 			x: GAME_DIMENSIONS.width / 2,
 			y: GAME_DIMENSIONS.height / 2,
 

@@ -18,6 +18,7 @@ export class ShuffleButtonFactory extends AbstractStandardFactory<Button> {
 		};
 
 		const button = new Button({
+			alpha: 0,
 			x: GAME_DIMENSIONS.width / 2,
 			y: GAME_DIMENSIONS.height / 2,
 

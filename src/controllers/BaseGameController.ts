@@ -81,5 +81,7 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 				break;
 			}
 		}
+
+		this._complete();
 	}
 }
