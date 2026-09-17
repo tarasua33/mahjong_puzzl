@@ -1,4 +1,4 @@
-import { GAME_DIMENSIONS, GAME_DIMENSIONS_PORTRAIT } from "../gameConfig";
+import { GAME_DIMENSIONS } from "../gameConfig";
 import { AbstractStandardFactory } from "../libs/factories/AbstractStandardFactory";
 import { StandardContainer } from "../libs/gameObjects/StandardContainer";
 import { Panel } from "../view/Panel";
@@ -27,7 +27,7 @@ export class PanelFactory extends AbstractStandardFactory<Panel> {
 			},
 
 			portrait: {
-				x: GAME_DIMENSIONS_PORTRAIT.width / 2 - 37.5,
+				x: 260,
 				y: -200,
 			},
 

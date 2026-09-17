@@ -90,4 +90,20 @@ export class GameTile extends StandardSprite<GameTileConfig> {
 		particleLayer.removeFromParent();
 		particleLayers.push(particleLayer);
 	}
+
+	public getModel(): ITileModel {
+		return this._tileModel;
+	}
+
+	public getNewPosition(): { x: number; y: number } {
+		const { x, y, layer } = this._tileModel;
+
+		return {
+			x:
+				x * (TILE_WIDTH / GENERATOR_CONFIG.tileWidth) - LAYER_OFFSETS.x * layer,
+			y:
+				y * (TILE_HIGHT / GENERATOR_CONFIG.tileHeight) -
+				LAYER_OFFSETS.y * layer,
+		};
+	}
 }

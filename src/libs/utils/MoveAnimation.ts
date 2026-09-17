@@ -10,6 +10,7 @@ export class MoveAnimation {
 		startPosition: { x: number; y: number },
 		targetPosition: { x: number; y: number },
 		duration: number,
+		ease: string = "power2.inOut",
 	): Promise<void> {
 		return new Promise((resolve) => {
 			this._resolve = resolve;
@@ -22,7 +23,7 @@ export class MoveAnimation {
 				x: targetPosition.x,
 				y: targetPosition.y,
 				duration,
-				ease: "power2.inOut",
+				ease,
 				onComplete: () => this._complete(),
 			});
 		});

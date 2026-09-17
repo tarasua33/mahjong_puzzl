@@ -7,10 +7,12 @@ import { Panel } from "../view/Panel";
 import { ParticleLayer } from "../view/ParticleLayer";
 
 import { TransitionsScreen } from "../view/TransitionsScreen";
+import { Button } from "../view/ui/Button";
 import { BgFactory } from "./BgFactory";
 import { GameTilesFactory } from "./GameTilesFactory";
 import { PanelFactory } from "./PanelFactory";
 import { ParticleLayerFactory } from "./ParticleLayerFactory";
+import { ShuffleButtonFactory } from "./ShuffleButtonFactory";
 // import { MuteButton } from "../view/ui/MuteButton";
 // import { TapHint } from "../view/ui/TapHint";
 
@@ -29,17 +31,22 @@ export interface IGameView {
 	tilePool: GameTilePool;
 	tileContainer: StandardContainer;
 	particleLayers: ParticleLayer[];
+	shuffleButton: Button;
 }
 
 export class GameViewFactory extends AbstractBaseFactory {
 	public buildUi(params: IBuildConfig): IGameView {
 		const { mainScene } = params;
 
+		// FACTORIES
 		const bgFactory = new BgFactory();
 		const transitionsScreenFactory = new TransitionsScreenFactory();
 		const tilePoolFactory = new GameTilesFactory();
 		const panelFactory = new PanelFactory();
 		const particleLayerFactory = new ParticleLayerFactory();
+		const shuffleButtonFactory = new ShuffleButtonFactory();
+
+		// VIEW
 		const bg = bgFactory.buildUi({ parent: mainScene });
 		const tileContainer = new StandardContainer({
 			landscape: {
@@ -55,9 +62,13 @@ export class GameViewFactory extends AbstractBaseFactory {
 		});
 		mainScene.addChild(tileContainer);
 		const panel = panelFactory.buildUi({ parent: tileContainer });
+
 		const particleLayers = particleLayerFactory.buildUi({
 			renderer: mainScene.renderer,
 			emitterCount: 2,
+		});
+		const shuffleButton = shuffleButtonFactory.buildUi({
+			parent: tileContainer,
 		});
 
 		// const tapHintFactory = new TapHintFactory();
@@ -73,6 +84,7 @@ export class GameViewFactory extends AbstractBaseFactory {
 				parent: mainScene,
 			}),
 			tilePool: tilePoolFactory.buildUi(),
+			shuffleButton,
 			tileContainer,
 			particleLayers,
 			// muteButton: muteButtonFactory.buildUi({

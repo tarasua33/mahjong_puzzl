@@ -263,6 +263,30 @@
         "x": 0.5,
         "y": 0.5
       }
+    },
+    "button_shuffle.png": {
+      "frame": {
+        "x": 1286,
+        "y": 316,
+        "w": 71,
+        "h": 84
+      },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 71,
+        "h": 84
+      },
+      "sourceSize": {
+        "w": 71,
+        "h": 84
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
     }
   },
   "meta": {

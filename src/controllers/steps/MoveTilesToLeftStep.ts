@@ -48,7 +48,6 @@ export class MoveTilesToLeftStep extends BaseStep<MoveTilesToLeftStepParams> {
 				continue;
 			}
 
-			// Позиції контейнерів стабільні.
 			const startPosition = {
 				x: sourceContainer.x,
 				y: sourceContainer.y,

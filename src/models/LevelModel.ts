@@ -26,6 +26,12 @@ interface IMechanicSettings {
 	tiles: ITileModel[];
 }
 
+export enum LevelStatus {
+	PLAYING = "playing",
+	LOSE = "lose",
+	WIN = "win",
+}
+
 export const TILE_TYPES = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 export const TILE_WIDTH = 114;
 export const TILE_HIGHT = 150;
@@ -86,8 +92,15 @@ export const LAYERING_MATRIX = [
 ];
 export type TileKey = `${number}-${number}-${number}`;
 
+export enum UserAction {
+	TilePicked = "tilePicked",
+	Shuffle = "shuffle",
+}
+
 export class LevelModel {
 	static instance: LevelModel;
+
+	private _status: LevelStatus = LevelStatus.PLAYING;
 
 	static getModel(): LevelModel {
 		if (!LevelModel.instance) {
@@ -102,7 +115,7 @@ export class LevelModel {
 	private _settings!: IMechanicSettings;
 	private _placedTiles = new Map<TileKey, GameTile>();
 	private _pickedTile?: ITileModel;
-	// private _activeTiles!: ITileModel[];
+	private _action?: UserAction;
 
 	public setPlacedTiles(tiles: Map<TileKey, GameTile>): void {
 		this._placedTiles = tiles;
@@ -128,31 +141,26 @@ export class LevelModel {
 		this._pickedTile = undefined;
 	}
 
-	// public addActiveTilesData(pickedTile: ITileModel): void {
-	// 	if (!this._activeTiles) {
-	// 		this._activeTiles = [];
-	// 	}
-	// 	this._activeTiles.push(pickedTile);
-	// }
+	removeUserAction(): void {
+		this._action = undefined;
+	}
 
-	// public getActiveTilesData(): ITileModel[] {
-	// 	return this._activeTiles;
-	// }
+	setUserAction(action: UserAction): void {
+		this._action = action;
+	}
+
+	getUserAction(): UserAction | undefined {
+		return this._action;
+	}
 
 	public setUpLvl(newLvl: number): void {
 		this._lvl = newLvl;
 	}
 
-	// public get lvl(): number {
-	// 	return this._lvl;
-	// }
-
 	public getLvlMechanicSettings(): IMechanicSettings {
 		if (!this._settings) {
 			this.generateLvlMechanicSettings();
 		}
-
-		console.log(this._settings);
 
 		return this._settings;
 	}
@@ -516,5 +524,71 @@ export class LevelModel {
 		}
 
 		settings.tiles = settings.tiles.filter((tile) => tile.type !== type);
+	}
+
+	public setStatus(status: LevelStatus): void {
+		this._status = status;
+	}
+
+	public getStatus(): LevelStatus {
+		return this._status;
+	}
+
+	public shuffleTiles(): void {
+		this._shuffleTilePositions();
+		this._updateTypeMatrix();
+		this._updatePlacedTilesKeys();
+	}
+
+	private _shuffleTilePositions(): void {
+		const { tiles } = this.getLvlMechanicSettings();
+
+		const positions = tiles.map(({ layer, x, y }) => ({
+			layer,
+			x,
+			y,
+		}));
+
+		this._shuffle(positions);
+
+		tiles.forEach((tile, index) => {
+			tile.layer = positions[index].layer;
+			tile.x = positions[index].x;
+			tile.y = positions[index].y;
+		});
+	}
+
+	private _updateTypeMatrix(): void {
+		const { typeMatrix, tiles } = this.getLvlMechanicSettings();
+
+		for (let layer = 0; layer < typeMatrix.length; layer++) {
+			for (let y = 0; y < typeMatrix[layer].length; y++) {
+				for (let x = 0; x < typeMatrix[layer][y].length; x++) {
+					typeMatrix[layer][y][x] = 0;
+				}
+			}
+		}
+
+		for (const tile of tiles) {
+			for (let dy = 0; dy < this._config.tileHeight; dy++) {
+				for (let dx = 0; dx < this._config.tileWidth; dx++) {
+					typeMatrix[tile.layer][tile.y + dy][tile.x + dx] = tile.type;
+				}
+			}
+		}
+	}
+
+	private _updatePlacedTilesKeys(): void {
+		const gameTiles = Array.from(this._placedTiles.values());
+
+		this._placedTiles = new Map();
+
+		for (const gameTile of gameTiles) {
+			const { x, y, layer } = gameTile.getModel();
+
+			const tileKey: TileKey = `${x}-${y}-${layer}`;
+
+			this._placedTiles.set(tileKey, gameTile);
+		}
 	}
 }

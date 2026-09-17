@@ -10,6 +10,9 @@ import { ScreenFadeOutStep } from "./steps/ScreenFadeOutStep";
 import { MovePickedTileToPanelStep } from "./steps/MovePickedTileToPanelStep";
 import { MatchTilesStep } from "./steps/MatchTilesStep";
 import { MoveTilesToLeftStep } from "./steps/MoveTilesToLeftStep";
+import { CheckGameStatusStep } from "./steps/CheckGameStatusStepParams";
+import { LevelStatus, UserAction } from "../models/LevelModel";
+import { ShuffleTilesAnimationStep } from "./steps/ShuffleTilesAnimationStep";
 
 // import { SetLvlSettingsStep } from "./steps/SetLvlSettingsStep";
 
@@ -50,21 +53,42 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 				delay: 0.25,
 			});
 
-			await new AwaitOnUserActionStep().start({});
-
-			await new MovePickedTileToPanelStep().start({
-				panel: gameView.panel,
+			await new AwaitOnUserActionStep().start({
+				shuffleButton: gameView.shuffleButton,
 			});
 
-			await new MatchTilesStep().start({
-				panel: gameView.panel,
-				gameTilePool: gameView.tilePool,
-				particleLayers: gameView.particleLayers,
-			});
+			const action = this._models.levelModel.getUserAction();
 
-			await new MoveTilesToLeftStep().start({
-				panel: gameView.panel,
-			});
+			if (action === UserAction.Shuffle) {
+				//
+				console.warn("=========SHUFFLE===========");
+				await new ShuffleTilesAnimationStep().start({
+					parent: gameView.tileContainer,
+				});
+			} else {
+				await new MovePickedTileToPanelStep().start({
+					panel: gameView.panel,
+				});
+
+				await new MatchTilesStep().start({
+					panel: gameView.panel,
+					gameTilePool: gameView.tilePool,
+					particleLayers: gameView.particleLayers,
+				});
+
+				await new MoveTilesToLeftStep().start({
+					panel: gameView.panel,
+				});
+
+				await new CheckGameStatusStep().start({
+					panel: gameView.panel,
+				});
+			}
+
+			const status = this._models.levelModel.getStatus();
+			if (status === LevelStatus.LOSE || status === LevelStatus.WIN) {
+				break;
+			}
 		}
 
 		await new AwaitTimeStep().start({
