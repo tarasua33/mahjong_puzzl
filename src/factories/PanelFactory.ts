@@ -34,10 +34,10 @@ export class PanelFactory extends AbstractStandardFactory<Panel> {
 
 			bg,
 			tilesPositions: [
-				{ x: -250, y: -75 },
-				{ x: -122, y: -75 },
-				{ x: 3, y: -75 },
-				{ x: 130, y: -75 },
+				{ x: -191, y: 0 },
+				{ x: -65, y: 0 },
+				{ x: 62, y: 0 },
+				{ x: 188, y: 0 },
 			],
 		});
 

@@ -17,8 +17,10 @@ export class GameTilesFactory extends AbstractStandardFactory<GameTilePool> {
 
 			for (let i = 0; i < settings.eachTileNumber; i++) {
 				const tile = new GameTile({
-					texture: this._assetsLoader.getTexture(textureName),
-					anchor: { x: 0, y: 0 },
+					bg: {
+						texture: this._assetsLoader.getTexture(textureName),
+						anchor: { x: 0.5, y: 0.5 },
+					},
 					type,
 				});
 

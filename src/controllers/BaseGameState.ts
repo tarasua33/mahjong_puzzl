@@ -14,7 +14,7 @@ interface ISTateParams {
 const PHRASES = {
 	WELCOME: "Let's get started!",
 	REPLAY: "Try again",
-	NEXT_LVL: "You won!\nGet ready for next game",
+	NEXT_LVL: "You won!\nGet ready\nfor next game",
 };
 
 export class BaseGameState extends BaseState {

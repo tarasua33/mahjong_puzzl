@@ -10,6 +10,7 @@ import { CheckGameStatusStep } from "./steps/CheckGameStatusStepParams";
 import { LevelStatus, UserAction } from "../models/LevelModel";
 import { ShuffleTilesAnimationStep } from "./steps/ShuffleTilesAnimationStep";
 import { ReturnTilesToPoolStep } from "./steps/ReturnTilesToPoolStep";
+import { SpawnTilesAnimationStep } from "./steps/SpawnTilesAnimationStep";
 
 // import { SetLvlSettingsStep } from "./steps/SetLvlSettingsStep";
 
@@ -39,9 +40,12 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 			pool: gameView.tilePool,
 		});
 
+		const spawnTilesAnimationStep = new SpawnTilesAnimationStep();
+		await spawnTilesAnimationStep.start({});
+
 		while (true) {
 			await new AwaitTimeStep().start({
-				delay: 0.15,
+				delay: 0.1,
 			});
 
 			await new AwaitOnUserActionStep().start({
@@ -78,6 +82,9 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 
 			const status = this._models.levelModel.getStatus();
 			if (status === LevelStatus.LOSE || status === LevelStatus.WIN) {
+				await new AwaitTimeStep().start({
+					delay: 0.25,
+				});
 				break;
 			}
 		}

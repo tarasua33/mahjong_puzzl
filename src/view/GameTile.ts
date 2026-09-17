@@ -1,4 +1,8 @@
 import {
+	StandardContainer,
+	StandardContainerConfig,
+} from "../libs/gameObjects/StandardContainer";
+import {
 	StandardSprite,
 	StandardSpriteConfig,
 } from "../libs/gameObjects/StandardSprite";
@@ -14,15 +18,16 @@ import {
 import { ParticleLayer } from "./ParticleLayer";
 
 const LAYER_OFFSETS = {
-	x: 5,
-	y: 4,
+	x: 6,
+	y: 5,
 };
 
-export interface GameTileConfig extends StandardSpriteConfig {
+export interface GameTileConfig extends StandardContainerConfig {
 	type: number;
+	bg: StandardSpriteConfig;
 }
 
-export class GameTile extends StandardSprite<GameTileConfig> {
+export class GameTile extends StandardContainer<GameTileConfig> {
 	public readonly onPickSignal = new Signal();
 	public readonly type: number;
 	private _dispatcher!: UserInteractionDispatcher;
@@ -38,10 +43,13 @@ export class GameTile extends StandardSprite<GameTileConfig> {
 	public build(): void {
 		super.build();
 
+		const bg = new StandardSprite(this._config.bg);
+		bg.build();
+		this.addChild(bg);
+
 		this._alphaAnimation = new AlphaInOutAnimation(this);
 
-		this.anchor.set(0, 0);
-		const dispatcher = (this._dispatcher = new UserInteractionDispatcher(this));
+		const dispatcher = (this._dispatcher = new UserInteractionDispatcher(bg));
 		dispatcher.pointerDownSignal.add(this._onPointed, this);
 	}
 
@@ -55,12 +63,9 @@ export class GameTile extends StandardSprite<GameTileConfig> {
 		this.alpha = 1;
 
 		this._tileModel = tileModel;
-		this.x =
-			tileModel.x * (TILE_WIDTH / GENERATOR_CONFIG.tileWidth) -
-			LAYER_OFFSETS.x * tileModel.layer;
-		this.y =
-			tileModel.y * (TILE_HIGHT / GENERATOR_CONFIG.tileHeight) -
-			LAYER_OFFSETS.x * tileModel.layer;
+		const pos = this.getNewPosition();
+		this.x = pos.x;
+		this.y = pos.y;
 	}
 
 	public async playMatch(particleLayers: ParticleLayer[]): Promise<void> {
@@ -75,12 +80,12 @@ export class GameTile extends StandardSprite<GameTileConfig> {
 		await Promise.all([
 			particleLayer.emitter.emit({
 				from: {
-					x: 0,
-					y: TILE_HIGHT,
+					x: -TILE_WIDTH / 2,
+					y: TILE_HIGHT / 2,
 				},
 				to: {
-					x: TILE_WIDTH,
-					y: -25,
+					x: TILE_WIDTH / 2,
+					y: -TILE_HIGHT / 2 - 25,
 				},
 				duration: 0.5,
 			}),
@@ -100,10 +105,13 @@ export class GameTile extends StandardSprite<GameTileConfig> {
 
 		return {
 			x:
-				x * (TILE_WIDTH / GENERATOR_CONFIG.tileWidth) - LAYER_OFFSETS.x * layer,
+				x * (TILE_WIDTH / GENERATOR_CONFIG.tileWidth) -
+				LAYER_OFFSETS.x * layer +
+				TILE_WIDTH / 2,
 			y:
 				y * (TILE_HIGHT / GENERATOR_CONFIG.tileHeight) -
-				LAYER_OFFSETS.y * layer,
+				LAYER_OFFSETS.y * layer +
+				TILE_HIGHT / 2,
 		};
 	}
 }
