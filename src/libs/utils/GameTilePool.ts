@@ -21,6 +21,7 @@ export class GameTilePool {
 			this._pool.set(tile.type, tiles);
 		}
 
+		tile.clearModel();
 		tile.removeFromParent();
 
 		tiles.push(tile);

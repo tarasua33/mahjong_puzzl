@@ -58,7 +58,8 @@ export class BaseGameController extends Controller<IControllerBaseParams> {
 				//
 				console.warn("=========SHUFFLE===========");
 				await new ShuffleTilesAnimationStep().start({
-					parent: gameView.tileContainer,
+					tileParent: gameView.tileContainer,
+					shuffleButton: gameView.shuffleButton,
 				});
 			} else {
 				await new MovePickedTileToPanelStep().start({

@@ -170,16 +170,21 @@ export class LevelModel {
 	}
 
 	public generateLvlMechanicSettings(): IMechanicSettings {
+		this._placedTiles.clear();
 		const geometryMatrix = this._generateGeometryMatrix();
 		const typeMatrix = this._generateTypeMatrix(geometryMatrix);
 		const tiles = this._getTilesModels(geometryMatrix, typeMatrix);
 		// console.log(typeMatrix);
 
-		return (this._settings = {
+		this._settings = {
 			geometryMatrix,
 			typeMatrix,
 			tiles,
-		});
+		};
+
+		console.log(this._settings);
+
+		return this._settings;
 	}
 
 	private _getTilesModels(

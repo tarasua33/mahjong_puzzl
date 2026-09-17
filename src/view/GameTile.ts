@@ -31,7 +31,7 @@ export class GameTile extends StandardContainer<GameTileConfig> {
 	public readonly onPickSignal = new Signal();
 	public readonly type: number;
 	private _dispatcher!: UserInteractionDispatcher;
-	private _tileModel!: ITileModel;
+	private _tileModel?: ITileModel;
 	private _alphaAnimation!: AlphaInOutAnimation;
 
 	constructor(config: GameTileConfig) {
@@ -97,11 +97,11 @@ export class GameTile extends StandardContainer<GameTileConfig> {
 	}
 
 	public getModel(): ITileModel {
-		return this._tileModel;
+		return this._tileModel!;
 	}
 
 	public getNewPosition(): { x: number; y: number } {
-		const { x, y, layer } = this._tileModel;
+		const { x, y, layer } = this._tileModel!;
 
 		return {
 			x:
@@ -113,5 +113,9 @@ export class GameTile extends StandardContainer<GameTileConfig> {
 				LAYER_OFFSETS.y * layer +
 				TILE_HIGHT / 2,
 		};
+	}
+
+	public clearModel(): void {
+		this._tileModel = undefined;
 	}
 }

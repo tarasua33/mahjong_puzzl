@@ -3,21 +3,27 @@ import {
 	BaseStepParams,
 } from "../../libs/controllers/steps/BaseStep";
 import { StandardContainer } from "../../libs/gameObjects/StandardContainer";
+import { ButtonClickAnimation } from "../../libs/utils/ButtonClickAnimation";
 import { MoveAnimation } from "../../libs/utils/MoveAnimation";
 import {
 	GENERATOR_CONFIG,
 	TILE_HIGHT,
 	TILE_WIDTH,
 } from "../../models/LevelModel";
+import { Button } from "../../view/ui/Button";
 
 export interface ShuffleTilesAnimationStepParams extends BaseStepParams {
-	parent: StandardContainer;
+	tileParent: StandardContainer;
+	shuffleButton: Button;
 }
 
 export class ShuffleTilesAnimationStep extends BaseStep<ShuffleTilesAnimationStepParams> {
 	protected async _start({
-		parent,
+		tileParent,
+		shuffleButton,
 	}: ShuffleTilesAnimationStepParams): Promise<void> {
+		new ButtonClickAnimation(shuffleButton).play();
+
 		this._models.levelModel.shuffleTiles();
 
 		const tiles = [...this._models.levelModel.getPlacedTiles().values()];
@@ -60,7 +66,7 @@ export class ShuffleTilesAnimationStep extends BaseStep<ShuffleTilesAnimationSte
 			);
 		});
 
-		parent.sortChildren();
+		tileParent.sortChildren();
 
 		await Promise.all(
 			tiles.map((tile) => {
@@ -74,6 +80,8 @@ export class ShuffleTilesAnimationStep extends BaseStep<ShuffleTilesAnimationSte
 				);
 			}),
 		);
+
+		console.log(this._models.levelModel.getLvlMechanicSettings());
 
 		this._complete();
 	}

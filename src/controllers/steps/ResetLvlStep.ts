@@ -2,6 +2,7 @@ import {
 	BaseStep,
 	BaseStepParams,
 } from "../../libs/controllers/steps/BaseStep";
+import { LevelStatus } from "../../models/LevelModel";
 import { Panel } from "../../view/Panel";
 import { Button } from "../../view/ui/Button";
 
@@ -17,6 +18,7 @@ export class ResetLvlStep<
 		panel.alpha = 1;
 		button.alpha = 1;
 
+		this._models.levelModel.setStatus(LevelStatus.PLAYING);
 		this._models.levelModel.generateLvlMechanicSettings();
 
 		this._complete();
