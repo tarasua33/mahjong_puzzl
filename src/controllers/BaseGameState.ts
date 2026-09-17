@@ -2,12 +2,11 @@ import { GameViewFactory, IGameView } from "../factories/GameViewFactory";
 import { BaseState } from "../libs/controllers/BaseState";
 import { StandardContainer } from "../libs/gameObjects/StandardContainer";
 import { BaseGameController } from "./BaseGameController";
-import { UserInteractionDispatcher } from "../libs/utils/UserInteractionDispatcher";
 import { TransitionController } from "./TransitionController";
 import { MainScene } from "../view/MainScene";
+import { LevelStatus } from "../models/LevelModel";
 
 interface ISTateParams {
-	userInteractionDispatcher: UserInteractionDispatcher;
 	mainScene: MainScene;
 	uiContainer: StandardContainer;
 }
@@ -15,7 +14,7 @@ interface ISTateParams {
 const PHRASES = {
 	WELCOME: "Let's get started!",
 	REPLAY: "Try again",
-	NEXT_LVL: "You win!\nGet ready for level",
+	NEXT_LVL: "You won!\nGet ready for next game",
 };
 
 export class BaseGameState extends BaseState {
@@ -23,16 +22,9 @@ export class BaseGameState extends BaseState {
 	private _transitionController!: TransitionController;
 
 	private _gameView!: IGameView;
-	private _userInteractionDispatcher!: UserInteractionDispatcher;
 	private _success: boolean = false;
 
-	public init({
-		userInteractionDispatcher,
-		mainScene,
-		uiContainer,
-	}: ISTateParams): void {
-		this._userInteractionDispatcher = userInteractionDispatcher;
-
+	public init({ mainScene, uiContainer }: ISTateParams): void {
 		this._transitionController = new TransitionController();
 		this._gameView = this._buildGameObjects(mainScene, uiContainer);
 
@@ -41,6 +33,7 @@ export class BaseGameState extends BaseState {
 		levelModel.setUpLvl(OVERWRITE_LVL);
 
 		this._baseGameController = new BaseGameController();
+		this._transitionController = new TransitionController();
 	}
 
 	private _buildGameObjects(
@@ -57,45 +50,28 @@ export class BaseGameState extends BaseState {
 	}
 
 	protected async _start(): Promise<void> {
-		await this._baseGameController.start({
+		await this._transitionController.start({
 			gameView: this._gameView,
-			userInteractionDispatcher: this._userInteractionDispatcher,
-			gameLoaded: true,
 			title: PHRASES.WELCOME,
 		});
+
+		while (true) {
+			await this._baseGameController.start({
+				gameView: this._gameView,
+				gameLoaded: true,
+				title: PHRASES.WELCOME,
+			});
+
+			await this._showTransitionScreen();
+		}
 	}
 
-	private _showTransitionScreen(success: boolean): void {
-		this._success = success;
+	private async _showTransitionScreen(): Promise<void> {
+		this._success = this._models.levelModel.getStatus() === LevelStatus.WIN;
 
-		// const transitionController = this._transitionController;
-		// transitionController.completeStepSignal.addOnce(this._restartGame, this);
-
-		// const lvlModels = this._models.levelModel;
-		// transitionController.start({
-		// 	success,
-		// 	gameView: this._gameView,
-		// 	title: this._success
-		// 		? PHRASES.NEXT_LVL + ` ${lvlModels.lvl + 1}`
-		// 		: PHRASES.REPLAY,
-		// });
-	}
-
-	private _restartGame(): void {
-		// const baseGameController = this._baseGameController;
-		// // const lvlModels = this._models.levelModel;
-		// lvlModels.setUpLvl(this._success ? lvlModels.lvl + 1 : lvlModels.lvl);
-		// baseGameController.completeStepSignal.addOnce(
-		// 	this._showTransitionScreen,
-		// 	this,
-		// );
-		// baseGameController.start({
-		// 	gameView: this._gameView,
-		// 	userInteractionDispatcher: this._userInteractionDispatcher,
-		// 	gameLoaded: false,
-		// 	title: this._success
-		// 		? PHRASES.NEXT_LVL + ` ${lvlModels.lvl}`
-		// 		: PHRASES.REPLAY,
-		// });
+		await this._transitionController.start({
+			gameView: this._gameView,
+			title: this._success ? PHRASES.NEXT_LVL : PHRASES.REPLAY,
+		});
 	}
 }

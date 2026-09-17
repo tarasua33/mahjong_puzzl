@@ -14,7 +14,7 @@ export class BgFactory extends AbstractStandardFactory<StandardSprite> {
 			x: GAME_DIMENSIONS.width / 2,
 			y: GAME_DIMENSIONS.width / 2,
 			anchor: { x: 0.5, y: 0.5 },
-			scale: { x: 1.25, y: 1.25 },
+			scale: { x: 1.3, y: 1.3 },
 		});
 		bg.build();
 		parent.addChild(bg);

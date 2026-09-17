@@ -1,34 +1,52 @@
 import { IGameView } from "../factories/GameViewFactory";
 import { Controller, IControllerParams } from "../libs/controllers/Controller";
+import { AwaitTimeStep } from "../libs/controllers/steps/AwaitTimeStep";
+import { ReturnTilesToPoolStep } from "./steps/ReturnTilesToPoolStep";
 
 import { ScreenFadeInStep } from "./steps/ScreenFadeInStep";
+import { ScreenFadeOutStep } from "./steps/ScreenFadeOutStep";
 
-interface IControllerBaseParams extends IControllerParams {
+interface ITransitionControllerParams extends IControllerParams {
 	gameView: IGameView;
 	title: string;
-	success: boolean;
+	// success: boolean;
 }
 
-export class TransitionController extends Controller<IControllerBaseParams> {
+export class TransitionController extends Controller<ITransitionControllerParams> {
 	private _screenFadeInStep: ScreenFadeInStep;
+	private _screenFadeOutStep: ScreenFadeOutStep;
+	private _awaitTimeStep: AwaitTimeStep;
+	private _returnTilesToPoolStep!: ReturnTilesToPoolStep;
 
 	constructor() {
 		super();
 
+		this._awaitTimeStep = new AwaitTimeStep();
 		this._screenFadeInStep = new ScreenFadeInStep();
-		// this._resetGameStep = new ResetGameStep();
-		// this._characterCelebrationStep = new CharacterCelebrationStep();
-		// this._playAudioStep = new PlayAudioStep();
+		this._screenFadeOutStep = new ScreenFadeOutStep();
+		this._returnTilesToPoolStep = new ReturnTilesToPoolStep();
 	}
 
-	protected _start(): void {
-		// baseSequence.addStepByStep(this._screenFadeInStep, {
-		//   screen: gameView.transitionsScreen as IFadeIn,
-		//   title: title,
-		// });
-	}
+	protected async _start({
+		gameView,
+		title,
+	}: ITransitionControllerParams): Promise<void> {
+		await this._screenFadeInStep.start({
+			title,
+			screen: gameView.transitionsScreen,
+		});
 
-	// protected _onComplete(): void {
-	// 	this.completeStepSignal.dispatch();
-	// }
+		await this._returnTilesToPoolStep.start({
+			panel: gameView.panel,
+			pool: gameView.tilePool,
+		});
+
+		await this._awaitTimeStep.start({
+			delay: 2,
+		});
+
+		await this._screenFadeOutStep.start({
+			screen: gameView.transitionsScreen,
+		});
+	}
 }

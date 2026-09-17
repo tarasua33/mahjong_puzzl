@@ -87,7 +87,6 @@ export class Game {
 
 		this._baseGame = new BaseGameState();
 		this._baseGame.init({
-			userInteractionDispatcher: this._userInteractionDispatcher,
 			mainScene: this._mainScene,
 			uiContainer: this._uiContainer,
 		});

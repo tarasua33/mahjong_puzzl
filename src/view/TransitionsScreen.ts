@@ -18,6 +18,7 @@ interface TransitionsScreenConfig extends StandardContainerConfig {
 		text: string;
 		styleOptions: Partial<TextStyle>;
 	};
+	textContainer: StandardContainerConfig;
 }
 
 export class TransitionsScreen
@@ -37,11 +38,21 @@ export class TransitionsScreen
 	public build(): void {
 		super.build();
 
-		const { bgX, bgY, bgW, bgH, textConfig, textX, textY } = this._config;
+		const { bgX, bgY, bgW, bgH, textConfig, textX, textY, textContainer } =
+			this._config;
+
+		const bgContainer = new StandardContainer({});
+		bgContainer.build();
+		bgContainer.position.set(bgX, bgY);
+		this.addChild(bgContainer);
 
 		const bg = new Graphics();
-		bg.beginFill(0x273028).drawRect(bgX, bgY, bgW, bgH).endFill();
-		this.addChild(bg);
+		bg.beginFill(0x173b32).drawRect(0, 0, bgW, bgH).endFill();
+		bgContainer.addChild(bg);
+
+		const textContainerView = new StandardContainer(textContainer);
+		textContainerView.build();
+		this.addChild(textContainerView);
 
 		const text = (this._text = new Text(
 			textConfig.text,
@@ -52,7 +63,7 @@ export class TransitionsScreen
 		text.x = textX;
 		text.y = textY;
 
-		this.addChild(text);
+		textContainerView.addChild(text);
 	}
 
 	public show(): void {

@@ -125,6 +125,10 @@ export class LevelModel {
 		return this._placedTiles;
 	}
 
+	// public clearPlacedTiles(): void {
+	// 	this._placedTiles = undefined;
+	// }
+
 	public getGeneralSettings(): ITileSettings {
 		return TILE_SETTINGS;
 	}
