@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmahjong_puzzl=self.webpackChunkmahjong_puzzl||[]).push([[162],{2162(u,e,h){h.r(e);h(9010),h(8480),h(4191)}}]);

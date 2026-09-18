@@ -1,0 +1,13 @@
+{
+  "bundles": [
+    {
+      "name": "preload",
+      "assets": [
+        {
+          "alias": "mainAtlas",
+          "src": "gameAtlas/mainAtlas.json"
+        }
+      ]
+    }
+  ]
+}
