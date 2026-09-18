@@ -27,7 +27,9 @@ export class AwaitOnUserActionStep extends BaseStep<AwaitOnUserActionStepParams>
 			tile.onPickSignal.add(this._onTilePicked, this);
 		});
 
-		this._params!.shuffleButton.onPickSignal.add(this._onShufflePressed, this);
+		const { shuffleButton } = this._params!;
+		// shuffleButton.makeActive();
+		shuffleButton.onPickSignal.add(this._onShufflePressed, this);
 	}
 
 	private _onTilePicked(tileModel: ITileModel): void {
@@ -57,7 +59,9 @@ export class AwaitOnUserActionStep extends BaseStep<AwaitOnUserActionStepParams>
 			tile.onPickSignal.removeAll();
 		});
 
-		this._params!.shuffleButton.onPickSignal.removeAll();
+		const { shuffleButton } = this._params!;
+		// shuffleButton.makeInactive();
+		shuffleButton.onPickSignal.removeAll();
 
 		this._tiles.length = 0;
 	}
