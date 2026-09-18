@@ -18,11 +18,11 @@ export class AssetsLoader {
 	}
 
 	public async initAssets(): Promise<boolean> {
-		const manifest = await fetch("/assets/manifest.json").then((res) =>
+		const manifest = await fetch("./assets/manifest.json").then((res) =>
 			res.json(),
 		);
 
-		await Assets.init({ manifest, basePath: "/assets" });
+		await Assets.init({ manifest, basePath: "./assets" });
 
 		return true;
 	}
